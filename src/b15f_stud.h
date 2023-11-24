@@ -10,9 +10,13 @@ struct B15F {
 
   uint8_t digitalRead0();
   uint8_t digitalRead1();
+  void studSetIn0(uint8_t value);
+  void studSetIn1(uint8_t value);
 
   void digitalWrite0(uint8_t value);
   void digitalWrite1(uint8_t value);
+
+  static void delay_ms(uint16_t ms);
 
  private:
   static B15F* instance;

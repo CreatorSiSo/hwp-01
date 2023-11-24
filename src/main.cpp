@@ -49,7 +49,7 @@ void knight_rider(B15F& drv, std::mutex& drv_mutex,
 
     double shift = tri_wave(i, 8);
     uint8_t leds = start << (size_t)shift;
-    std::cout << std::bitset<8>(leds) << "\n";
+    // std::cout << std::bitset<8>(leds) << "\n";
 
     drv.digitalWrite0(leds);
     drv.digitalWrite1(~leds);
@@ -66,22 +66,25 @@ int main() {
 
   std::atomic<Mode> mode = {Mode::KnightRider};
   // Not using a mutex here because its just too slow
-  std::atomic<bool> thread_allowed = {false};
-  std::thread thread_a([&drv, &drv_mutex, &thread_allowed, &mode]() {
-    knight_rider(drv, drv_mutex, thread_allowed, mode);
+  std::atomic<bool> thread_accessing = {false};
+  std::thread thread_a([&drv, &drv_mutex, &thread_accessing, &mode]() {
+    knight_rider(drv, drv_mutex, thread_accessing, mode);
   });
-  std::thread thread_b([&drv, &drv_mutex, &thread_allowed, &mode]() {
-    mode_invert(drv, drv_mutex, thread_allowed, mode);
+  std::thread thread_b([&drv, &drv_mutex, &thread_accessing, &mode]() {
+    mode_invert(drv, drv_mutex, thread_accessing, mode);
   });
   thread_a.detach();
   thread_b.detach();
 
   while (true) {
-    if (thread_allowed) continue;
+    // emulate speed of b15 board on other machines
+    B15F::delay_ms(50);
+
+    if (thread_accessing) continue;
     const auto dip_switch = std::bitset<8>(drv.readDipSwitch());
     const auto new_mode = mode_from_bool(dip_switch[0]);
     const auto changed = new_mode != mode;
     mode = new_mode;
-    thread_allowed = true;
+    thread_accessing = true;
   }
 }
