@@ -7,6 +7,7 @@ struct B15F {
   static B15F& getInstance();
 
   uint8_t readDipSwitch();
+  void setDipSwitch(uint8_t value);
 
   uint8_t digitalRead0();
   uint8_t digitalRead1();
@@ -21,6 +22,7 @@ struct B15F {
  private:
   static B15F* instance;
 
+  uint8_t dipSwitch = 0;
   uint8_t in0 = 0;
   uint8_t in1 = 0;
   uint8_t out0 = 0;

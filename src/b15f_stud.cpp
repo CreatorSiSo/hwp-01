@@ -16,7 +16,11 @@ B15F& B15F::getInstance() {
   return *instance;
 }
 
-uint8_t B15F::readDipSwitch() { return 0b00000001; }
+uint8_t B15F::readDipSwitch() { return dipSwitch; }
+void B15F::setDipSwitch(uint8_t value) {
+  std::cout << "dip: " << std::bitset<8>(value) << "\n";
+  dipSwitch = value;
+}
 
 uint8_t B15F::digitalRead0() { return in0; }
 uint8_t B15F::digitalRead1() { return in1; }
