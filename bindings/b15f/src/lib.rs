@@ -74,11 +74,11 @@ impl Driver for B15fStud {
 		self.in1
 	}
 	fn digital_write_0(&mut self, value: u8) {
-		println!("{value:08b}");
+		println!("out0: {value:08b}");
 		self.out0 = value;
 	}
 	fn digital_write_1(&mut self, value: u8) {
-		println!("{value:08b}");
+		println!("out1: {value:08b}");
 		self.out1 = value;
 	}
 }
