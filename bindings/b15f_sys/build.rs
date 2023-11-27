@@ -15,6 +15,7 @@ fn main() {
 		.clang_arg("-std=c++14")
 		.enable_cxx_namespaces()
 		.allowlist_type("B15F")
+		.blocklist_file("usart.h")
 		.opaque_type("std::.*")
 		// Tell cargo to invalidate the built crate whenever any of the
 		// included header files changed.
