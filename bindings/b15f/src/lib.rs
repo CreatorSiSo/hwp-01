@@ -1,4 +1,3 @@
-use b15f_sys::root as b15f_sys;
 use std::sync::RwLock;
 
 #[cfg(not(feature = "stud"))]
@@ -10,12 +9,23 @@ pub struct B15fDriver {
 impl B15fDriver {
 	/// ## Exeptions
 	/// Might crash because of exeptions from the C++ side.
-	pub fn new() -> Self {
-		Self {
+	pub fn new() -> Result<Self, &'static str> {
+		let mut error_code = b15f_sys::ConnectionError_None;
+		let instance = unsafe { b15f_sys::tryGetInstance(&mut error_code) };
+
+		if error_code == b15f_sys::ConnectionError_Err {
+			// TODO print message from exception
+			return Err("Caugth exception");
+		}
+		if instance.is_null() {
+			return Err("Instance is null");
+		}
+
+		Ok(Self {
 			// TODO Handle exeptions, prob needs C++ wrapper
 			// SAFETY: Inside RwLock, ...
-			inner: RwLock::new(unsafe { b15f_sys::B15F_getInstance() }),
-		}
+			inner: RwLock::new(instance),
+		})
 	}
 
 	pub fn read_dip_switch(&self) -> u8 {

@@ -1,7 +1,7 @@
 use b15f::B15fDriver;
 
-fn main() {
-	let mut driver = B15fDriver::new();
+fn main() -> Result<(), &'static str> {
+	let mut driver = B15fDriver::new()?;
 
 	let mut knight_rider = (0..).map(|i: usize| {
 		const NUM_LEDS: usize = 8;

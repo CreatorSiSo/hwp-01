@@ -1,19 +1,13 @@
-use std::{
-	ops::{BitOrAssign, ShlAssign},
-	thread::sleep,
-	time::Duration,
-};
-
 use b15f::B15fDriver;
+use std::ops::ShlAssign;
 
-fn main() {
-	let mut driver = B15fDriver::new();
-	let truth_table: Vec<(u8, u8)> = bool_combinations(8)
+fn main() -> Result<(), &'static str> {
+	let mut driver = B15fDriver::new()?;
+	let truth_table: Vec<(u8, u8)> = bool_combinations(2)
 		.into_iter()
 		.map(|input| {
 			driver.digital_write_0(input);
-			sleep(Duration::from_millis(5));
-			(input, driver.digital_read_1())
+			(input, driver.digital_read_0())
 		})
 		.collect();
 
@@ -22,6 +16,8 @@ fn main() {
 	for (input, output) in truth_table {
 		println!("{input:08b} | {output:08b}");
 	}
+
+	Ok(())
 }
 
 fn bool_combinations(num_inputs: u8) -> Vec<u8> {
@@ -29,17 +25,17 @@ fn bool_combinations(num_inputs: u8) -> Vec<u8> {
 	let mut combinations = Vec::with_capacity(num_combinations);
 	combinations.extend_from_slice(&[0, 1]);
 
-	(1..num_inputs).for_each(|_| {
-		let second_half = combinations
-			.clone()
-			.into_iter()
-			.map(|combination| combination << 1);
-		combinations.iter_mut().for_each(|combination| {
+	for _ in 1..num_inputs {
+		for combination in &mut combinations {
 			combination.shl_assign(1);
-			combination.bitor_assign(1);
-		});
-		combinations.extend(second_half);
-	});
+		}
+		combinations.extend(
+			combinations
+				.clone()
+				.iter()
+				.map(|combination| combination | 1),
+		);
+	}
 
 	combinations
 }
@@ -47,17 +43,16 @@ fn bool_combinations(num_inputs: u8) -> Vec<u8> {
 #[test]
 fn test_bool_combinations() {
 	assert_eq!(bool_combinations(1), vec![0, 1]);
-	assert_eq!(bool_combinations(2), vec![01, 01, 10, 00]);
+	assert_eq!(bool_combinations(2), vec![00, 10, 01, 11]);
 	assert_eq!(
-		bool_combinations(2),
-		vec![011, 011, 101, 001, 010, 010, 100, 000]
+		bool_combinations(3),
+		vec![000, 100, 010, 110, 001, 101, 011, 111]
 	);
-
-	print!(
-		"{}",
-		bool_combinations(4)
-			.iter()
-			.map(|combination| format!("{:08b}\n", combination))
-			.fold(String::new(), |accum, combination| accum + &combination)
+	assert_eq!(
+		bool_combinations(4),
+		vec![
+			0000, 1000, 0100, 1100, 0010, 1010, 0110, 1110, 0001, 1001, 0101, 1101, 0011, 1011,
+			0111, 1111
+		]
 	);
 }
