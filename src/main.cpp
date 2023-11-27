@@ -5,8 +5,8 @@
 #include <mutex>
 #include <thread>
 
-#include "b15f_stud.h"
-// #include "b15f/b15f.h"
+// #include "b15f_stud.h"
+#include "b15f/b15f.h"
 
 // Generates a triangle wave, period is also the amplitude
 size_t tri_wave(size_t i, uint32_t period) {
@@ -72,11 +72,11 @@ int main() {
   std::atomic<bool> thread_terminate = {false};
   std::thread thread;
 
-  drv.setDipSwitch(0b00000001);
+  // drv.setDipSwitch(0b00000001);
   bool first = true;
   while (true) {
     // emulate speed of the board on other machines
-    B15F::delay_ms(50);
+    // B15F::delay_ms(50);
 
     if (thread_accessing) continue;
     const auto dip_switch = std::bitset<8>(drv.readDipSwitch());

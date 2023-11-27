@@ -1,1 +1,2 @@
-g++ src/b15f_stud.cpp src/main.cpp -o build/out -std=c++23 && build/out
+g++ src/main.cpp -o build/out -lpthread -lb15fdrv && build/out
+# g++ src/b15f_stud.cpp src/main.cpp -o build/out && build/out
