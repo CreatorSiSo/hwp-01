@@ -7,3 +7,6 @@ edition = "2021"
 
 [dependencies]
 b15f_sys = { path = "../b15f_sys" }
+
+[features]
+stud = []

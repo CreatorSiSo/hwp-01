@@ -1,9 +1,7 @@
-use b15f::{B15fDriver, B15fStud, Driver};
-use std::time::Duration;
+use b15f::B15fDriver;
 
 fn main() {
 	let mut driver = B15fDriver::new();
-	// let mut driver = B15fStud::new();
 
 	let mut knight_rider = (0..).map(|i: usize| {
 		const NUM_LEDS: usize = 8;
@@ -19,7 +17,8 @@ fn main() {
 	});
 
 	loop {
-		// std::thread::sleep(Duration::from_millis(50));
+		#[cfg(feature = "stud")]
+		std::thread::sleep(std::time::Duration::from_millis(50));
 
 		let dip_switch = driver.read_dip_switch();
 		// println!("{dip_switch:08b}");
@@ -30,7 +29,7 @@ fn main() {
 				let in_1 = driver.digital_read_1();
 				driver.digital_write_0(!in_0);
 				driver.digital_write_1(!in_1);
-			},
+			}
 			Mode::KnightRider => {
 				if let Some(leds) = knight_rider.next() {
 					driver.digital_write_0(leds);

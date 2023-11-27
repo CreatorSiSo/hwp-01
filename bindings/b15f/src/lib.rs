@@ -1,50 +1,43 @@
-use b15f_sys::root as binding;
+use b15f_sys::root as b15f_sys;
 use std::sync::RwLock;
 
-pub trait Driver {
-	fn new() -> Self;
-
-	fn read_dip_switch(&self) -> u8;
-	fn digital_read_0(&self) -> u8;
-	fn digital_read_1(&self) -> u8;
-	fn digital_write_0(&mut self, value: u8);
-	fn digital_write_1(&mut self, value: u8);
-}
-
+#[cfg(not(feature = "stud"))]
 pub struct B15fDriver {
-	inner: RwLock<*mut binding::B15F>,
+	inner: RwLock<*mut b15f_sys::B15F>,
 }
 
-impl Driver for B15fDriver {
+#[cfg(not(feature = "stud"))]
+impl B15fDriver {
 	/// ## Exeptions
 	/// Might crash because of exeptions from the C++ side.
-	fn new() -> Self {
+	pub fn new() -> Self {
 		Self {
 			// TODO Handle exeptions, prob needs C++ wrapper
 			// SAFETY: Inside RwLock, ...
-			inner: RwLock::new(unsafe { binding::B15F_getInstance() }),
+			inner: RwLock::new(unsafe { b15f_sys::B15F_getInstance() }),
 		}
 	}
 
-	fn read_dip_switch(&self) -> u8 {
-		unsafe { binding::B15F_readDipSwitch(*self.inner.read().unwrap()) }
+	pub fn read_dip_switch(&self) -> u8 {
+		unsafe { b15f_sys::B15F_readDipSwitch(*self.inner.read().unwrap()) }
 	}
 
-	fn digital_read_0(&self) -> u8 {
-		unsafe { binding::B15F_digitalRead0(*self.inner.read().unwrap()) }
+	pub fn digital_read_0(&self) -> u8 {
+		unsafe { b15f_sys::B15F_digitalRead0(*self.inner.read().unwrap()) }
 	}
-	fn digital_read_1(&self) -> u8 {
-		unsafe { binding::B15F_digitalRead1(*self.inner.read().unwrap()) }
+	pub fn digital_read_1(&self) -> u8 {
+		unsafe { b15f_sys::B15F_digitalRead1(*self.inner.read().unwrap()) }
 	}
-	fn digital_write_0(&mut self, value: u8) {
-		unsafe { binding::B15F_digitalWrite0(*self.inner.read().unwrap(), value) }
+	pub fn digital_write_0(&mut self, value: u8) {
+		unsafe { b15f_sys::B15F_digitalWrite0(*self.inner.read().unwrap(), value) }
 	}
-	fn digital_write_1(&mut self, value: u8) {
-		unsafe { binding::B15F_digitalWrite1(*self.inner.read().unwrap(), value) }
+	pub fn digital_write_1(&mut self, value: u8) {
+		unsafe { b15f_sys::B15F_digitalWrite1(*self.inner.read().unwrap(), value) }
 	}
 }
 
-pub struct B15fStud {
+#[cfg(feature = "stud")]
+pub struct B15fDriver {
 	dip_switch: u8,
 	in0: u8,
 	in1: u8,
@@ -52,8 +45,9 @@ pub struct B15fStud {
 	out1: u8,
 }
 
-impl Driver for B15fStud {
-	fn new() -> Self {
+#[cfg(feature = "stud")]
+impl B15fDriver {
+	pub fn new() -> Self {
 		Self {
 			dip_switch: 1,
 			in0: 0,
@@ -63,21 +57,21 @@ impl Driver for B15fStud {
 		}
 	}
 
-	fn read_dip_switch(&self) -> u8 {
+	pub fn read_dip_switch(&self) -> u8 {
 		self.dip_switch
 	}
 
-	fn digital_read_0(&self) -> u8 {
+	pub fn digital_read_0(&self) -> u8 {
 		self.in0
 	}
-	fn digital_read_1(&self) -> u8 {
+	pub fn digital_read_1(&self) -> u8 {
 		self.in1
 	}
-	fn digital_write_0(&mut self, value: u8) {
+	pub fn digital_write_0(&mut self, value: u8) {
 		println!("out0: {value:08b}");
 		self.out0 = value;
 	}
-	fn digital_write_1(&mut self, value: u8) {
+	pub fn digital_write_1(&mut self, value: u8) {
 		println!("out1: {value:08b}");
 		self.out1 = value;
 	}
