@@ -23,6 +23,7 @@ fn main() {
 		.enable_cxx_namespaces()
 		.allowlist_type("B15F")
 		.blocklist_function("B15F_exec")
+		.blocklist_function("B15F_abort")
 		.blocklist_function("B15F_delay_.*")
 		.opaque_type("USART")
 		.blocklist_function("USART.*")

@@ -7,8 +7,6 @@ pub struct B15fDriver {
 
 #[cfg(not(feature = "stud"))]
 impl B15fDriver {
-	/// ## Exeptions
-	/// Might crash because of exeptions from the C++ side.
 	pub fn new() -> Result<Self, &'static str> {
 		let mut error_code = b15f_sys::ConnectionError_None;
 		let instance = unsafe { b15f_sys::tryGetInstance(&mut error_code) };

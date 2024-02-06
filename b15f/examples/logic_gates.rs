@@ -1,5 +1,4 @@
 use b15f::B15fDriver;
-use std::ops::ShlAssign;
 
 fn main() -> Result<(), &'static str> {
 	let mut driver = B15fDriver::new()?;
@@ -27,7 +26,7 @@ fn bool_combinations(num_inputs: u8) -> Vec<u8> {
 
 	for _ in 1..num_inputs {
 		for combination in &mut combinations {
-			combination.shl_assign(1);
+			*combination <<= 1;
 		}
 		combinations.extend(
 			combinations
