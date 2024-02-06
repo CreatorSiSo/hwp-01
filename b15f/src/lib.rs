@@ -57,14 +57,14 @@ pub struct B15fDriver {
 
 #[cfg(feature = "stud")]
 impl B15fDriver {
-	pub fn new() -> Self {
-		Self {
+	pub fn new() -> Result<Self, &'static str> {
+		Ok(Self {
 			dip_switch: 1,
 			in0: 0,
 			in1: 0,
 			out0: 0,
 			out1: 0,
-		}
+		})
 	}
 
 	pub fn read_dip_switch(&self) -> u8 {
