@@ -1,8 +1,18 @@
+use std::io::{stdin, stdout, Write};
+
 use b15f::B15fDriver;
 
 fn main() -> Result<(), &'static str> {
     let mut driver = B15fDriver::new()?;
-    let truth_table: Vec<(u8, u8)> = bool_combinations(2)
+
+    print!("Number of inpus [1..=8]: ");
+    stdout().flush().unwrap();
+
+    let mut line = String::new();
+    stdin().read_line(&mut line).unwrap();
+    let num_inputs: u8 = line.trim().parse().unwrap();
+
+    let truth_table: Vec<(u8, u8)> = bool_combinations(num_inputs)
         .into_iter()
         .map(|input| {
             driver.digital_write_0(input);
